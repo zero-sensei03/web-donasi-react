@@ -45,6 +45,8 @@ jobs:
           port: ${{ secrets.VPS_SSH_PORT }}
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
+          use_insecure_cipher: true
+          request_pty: true
           timeout: 60s
           command_timeout: 10m
           script: |
