@@ -3,7 +3,7 @@ name: Deploy React App to NAT VPS
 on:
   push:
     branches:
-      - main # Jalankan workflow saat push/merge ke branch main
+      - main
 
 permissions:
   contents: read
@@ -33,11 +33,36 @@ jobs:
           context: .
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          # Mengirimkan variabel ENV ke Docker ARGS saat build time
           build-args: |
             VITE_APP_API_URL=${{ secrets.VITE_APP_API_URL }}
             VITE_APP_ENV=production
 
+      # STEP 1: Buat direktori di VPS jika belum ada
+      - name: Create app directory on VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          use_insecure_cipher: true
+          request_pty: true
+          script: |
+            mkdir -p /opt/docker/apps/web-donasi-frontend
+
+      # STEP 2: Copy file docker-compose.yml dari GitHub ke VPS
+      - name: Copy docker-compose.yml to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          username: ${{ secrets.VPS_USERNAME }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          use_insecure_cipher: true
+          source: "docker-compose.yml"
+          target: "/opt/docker/apps/web-donasi-frontend"
+
+      # STEP 3: Jalankan docker compose di VPS
       - name: Deploy to NAT VPS via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -51,6 +76,6 @@ jobs:
           command_timeout: 10m
           script: |
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            cd /opt/docker/react-app
+            cd /opt/docker/apps/web-donasi-frontend
             docker compose pull
             docker compose up -d --remove-orphans
