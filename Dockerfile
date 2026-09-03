@@ -1,5 +1,5 @@
 # --- Stage 1: Build React App ---
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Ambil Build Arguments dari GitHub Actions / Docker Compose
@@ -12,7 +12,7 @@ ENV VITE_APP_API_URL=$VITE_APP_API_URL
 ENV VITE_APP_ENV=$VITE_APP_ENV
 
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm install
 
 COPY . .
 RUN npm run build
