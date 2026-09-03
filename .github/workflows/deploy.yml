@@ -5,6 +5,10 @@ on:
     branches:
       - main # Jalankan workflow saat push/merge ke branch main
 
+permissions:
+  contents: read
+  packages: write
+  
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
