@@ -1,0 +1,164 @@
+@import 'tailwindcss';
+@plugin './hero.ts';
+/* Note: You may need to change the path to fit your project structure */
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* ================================
+     Background & Foreground
+     ================================ */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  /* ================================
+     Card & Surface
+     ================================ */
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+
+  /* ================================
+     Primary - ATAC Green
+     ================================ */
+  --primary: #16a34a;
+  --primary-foreground: #ffffff;
+
+  /* ================================
+     Secondary
+     ================================ */
+  --secondary: #f1f5f9;
+  --secondary-foreground: #0f172a;
+
+  /* ================================
+     Muted
+     ================================ */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
+
+  /* ================================
+     Accent
+     ================================ */
+  --accent: #dcfce7;
+  --accent-foreground: #15803d;
+
+  /* ================================
+     Destructive
+     ================================ */
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+
+  /* ================================
+     Border & Input
+     ================================ */
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #16a34a;
+
+  /* ================================
+     ATAC Brand
+     ================================ */
+  --atac-green: #16a34a;
+  --atac-green-dark: #15803d;
+  --atac-green-light: #dcfce7;
+  --atac-green-soft: #f0fdf4;
+
+  /* ================================
+     Navy
+     ================================ */
+  --navy: #061a2b;
+  --navy-dark: #081f33;
+  --navy-card: #0b2942;
+  --navy-slate: #102f47;
+
+  /* ================================
+     Blue
+     ================================ */
+  --blue: #2563eb;
+  --blue-light: #dbeafe;
+
+  /* ================================
+     Sponsorship
+     ================================ */
+  --gold: #d4a017;
+  --gold-light: #fef3c7;
+
+  --silver: #94a3b8;
+  --silver-light: #f1f5f9;
+
+  --bronze: #a16207;
+  --bronze-light: #fef3c7;
+
+  --supporter: #0f766e;
+  --supporter-light: #ccfbf1;
+
+  /* ================================
+     Status
+     ================================ */
+  --success: #16a34a;
+  --success-light: #dcfce7;
+
+  --warning: #f59e0b;
+  --warning-light: #fef3c7;
+
+  --info: #2563eb;
+  --info-light: #dbeafe;
+
+  --danger: #dc2626;
+  --danger-light: #fee2e2;
+
+  /* ================================
+     Radius
+     ================================ */
+  --radius: 0.75rem;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-atac-green: var(--atac-green);
+  --color-atac-green-dark: var(--atac-green-dark);
+  --color-atac-green-light: var(--atac-green-light);
+  --color-atac-green-soft: var(--atac-green-soft);
+  --color-navy: var(--navy);
+  --color-navy-dark: var(--navy-dark);
+  --color-navy-card: var(--navy-card);
+  --color-navy-slate: var(--navy-slate);
+  --color-blue: var(--blue);
+  --color-blue-light: var(--blue-light);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-silver: var(--silver);
+  --color-silver-light: var(--silver-light);
+  --color-bronze: var(--bronze);
+  --color-bronze-light: var(--bronze-light);
+  --color-supporter: var(--supporter);
+  --color-supporter-light: var(--supporter-light);
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-warning: var(--warning);
+  --color-warning-light: var(--warning-light);
+  --color-info: var(--info);
+  --color-info-light: var(--info-light);
+  --color-danger: var(--danger);
+  --color-danger-light: var(--danger-light);
+}

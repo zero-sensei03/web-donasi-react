@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  react-app:
+    # Ganti 'username-github' dan 'nama-repo' sesuai repository kamu
+    image: ghcr.io/zero-sensei03/web-donasi-react:latest
+    container_name: react-app-4001
+    restart: always
+    ports:
+      - "4001:4001"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

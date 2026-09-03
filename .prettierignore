@@ -1,0 +1,15 @@
+# Folder hasil build/bundle
+dist
+build
+coverage
+
+# Folder dependensi
+node_modules
+
+# File kunci atau log
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Public assets yang tidak perlu di-format
+public
