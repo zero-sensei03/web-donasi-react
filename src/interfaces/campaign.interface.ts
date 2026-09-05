@@ -15,10 +15,21 @@ export interface CampaignPublicRes {
         heroTitle: string | null;
         heroDescription: string | null;
         whyHomeDescription: string | null;
-        whySection: [],
+        whySection: {
+            icon: string | null;
+            title: string;
+            subTitle: string;
+        }[],
         supportWorkTagline: string | null;
         supportWorkDescription: string | null;
-        supportWorkSection: [],
+        supportWorkSection: {
+            order: number;
+            icon: string | null;
+            title: string;
+            tagline: string | null;
+            description: string | null;
+            focus: string[];
+        }[],
         ctaSectionBgImage: string | null;
         ctaSectionTagline: string | null;
         ctaSectionTitle: string | null;
