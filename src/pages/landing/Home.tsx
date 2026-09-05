@@ -89,50 +89,6 @@ export default function Home() {
           id: item.order.toString(),
           image: item.icon || Logo
         })),
-        // [
-        //   {
-        //     id: '1',
-        //     order: 1,
-        //     image: Logo,
-        //     title: 'Akomodasi & Transportasi',
-        //     tagline: 'Kebutuhan Perjalanan Tim',
-        //     description:
-        //       'Dukungan Anda memastikan seluruh anggota tim dapat berangkat tepat waktu, memiliki tempat tinggal yang aman, dan fokus penuh pada persiapan teknis di lokasi lomba.',
-        //     focus: [
-        //       'Tiket keberangkatan & kepulangan tim',
-        //       'Penginapan dekat lokasi kompetisi',
-        //       'Mobilitas operasional tim selama di lokasi',
-        //     ],
-        //   },
-        //   {
-        //     id: '2',
-        //     order: 2,
-        //     title: 'Registrasi & Kebutuhan Teknis',
-        //     tagline: 'Kesiapan Berkompetisi',
-        //     description:
-        //       'Mencakup seluruh biaya administrasi resmi pendaftaran serta kelengkapan perangkat keras dan lunak pendukung karya yang akan dilombakan.',
-        //     image: Logo,
-        //     focus: [
-        //       'Biaya pendaftaran resmi kompetisi',
-        //       'Lisensi lunak & riset pendukung',
-        //       'Pengujian alat & lisensi karya',
-        //     ],
-        //   },
-        //   {
-        //     id: '3',
-        //     order: 3,
-        //     title: 'Logistik & Operasional Lapangan',
-        //     tagline: 'Kesehatan & Karantina',
-        //     description:
-        //       'Menjaga kondisi fisik dan mental tim agar tetap dalam performa terbaik selama masa penyisihan hingga babak final.',
-        //     image: Logo,
-        //     focus: [
-        //       'Konsumsi & nutrisi tim harian',
-        //       'Perlengkapan medis & dana darurat',
-        //       'Kebutuhan operasional kontingensi',
-        //     ],
-        //   },
-        // ],
       },
     }
   }, [campaign])
