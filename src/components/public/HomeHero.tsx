@@ -1,4 +1,4 @@
-import { Progress } from "@heroui/react";
+import { Progress, Skeleton } from "@heroui/react";
 import {
   ArrowRight,
   FileText,
@@ -10,32 +10,44 @@ import {
 } from "lucide-react";
 import type { CampaignProps } from "@/pages/landing/Home";
 import { Link } from "react-router-dom";
-import type { IconType } from "react-icons";
-export const HomeHero = ({ CampaignData }: { CampaignData: CampaignProps }) => {
-  const target = CampaignData.donationProgress.target;
-  const collected = CampaignData.donationProgress.amount;
-  const percentage = Math.round((collected / target) * 100);
+import { useGetCampaignDonationPublic } from "@/services/campaign";
+import { useSiteStore } from "@/stores/data-site";
+import { useMemo } from "react";
 
-  let donationStats: { label: string; value: string; icon: IconType }[] = [];
-  if (CampaignData.donationProgress) {
-    donationStats = [
-      {
-        label: "Total Donasi",
-        value: `Rp ${CampaignData.donationProgress.amount.toLocaleString("id-ID")}`,
-        icon: HeartHandshake,
-      },
-      {
-        label: "Donatur",
-        value: CampaignData.donationProgress.donaturCount.toLocaleString("id-ID"),
-        icon: Users,
-      },
-      {
-        label: "Sponsor",
-        value: CampaignData.donationProgress.sponsorCount.toLocaleString("id-ID"),
-        icon: Plane,
-      },
-    ];
-  }
+export const HomeHero = ({ CampaignData }: { CampaignData: CampaignProps }) => {
+  const campaign = useSiteStore((state) => state.campaignData);
+  const { data: dataDonation, isLoading: isLoadingDonation } = useGetCampaignDonationPublic(campaign?.id || null);
+
+  const donationStats = useMemo(() => {
+    const target = dataDonation?.data.target || 1;
+    const collected = dataDonation?.data.collected || 0;
+    const percentage = Math.round((collected / target) * 100);
+    const sponsor = dataDonation?.data.sponsor || 0;
+    const donaturTotal = dataDonation?.data.donateCount || 0;
+
+    return {
+      target,
+      collected,
+      percentage,
+      stats: [
+        {
+          label: "Total Donasi",
+          value: `Rp ${collected.toLocaleString("id-ID")}`,
+          icon: HeartHandshake,
+        },
+        {
+          label: "Donatur",
+          value: donaturTotal.toLocaleString("id-ID"),
+          icon: Users,
+        },
+        {
+          label: "Sponsor",
+          value: sponsor.toLocaleString("id-ID"),
+          icon: Plane,
+        },
+      ]
+    }
+  }, [dataDonation])
 
   const formatRupiah = (val: number) =>
     new Intl.NumberFormat("id-ID", {
@@ -147,73 +159,77 @@ export const HomeHero = ({ CampaignData }: { CampaignData: CampaignProps }) => {
         <div
           className="border border-atac-green-light bg-card/95 backdrop-blur-md rounded-xl shadow-md"
         >
-          <div className="p-6 sm:p-8">
-            <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
-              
-              {/* Progress Bar Info */}
-              <div className="lg:col-span-7 space-y-3">
-                <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Progress Pengumpulan Dana
-                    </span>
-                    <div className="mt-1 flex items-baseline gap-2">
-                      <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
-                        {formatRupiah(collected)}
+          {isLoadingDonation ? (
+            <Skeleton className="h-20 md:min-w-xl w-full rounded-md" />
+          ) : (
+            <div className="p-6 sm:p-8">
+              <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
+                
+                {/* Progress Bar Info */}
+                <div className="lg:col-span-7 space-y-3">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Progress Pengumpulan Dana
                       </span>
-                      <span className="text-xs font-bold text-success bg-success/10 px-2 py-0.5 rounded-full">
-                        {percentage}%
-                      </span>
+                      <div className="mt-1 flex items-baseline gap-2">
+                        <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+                          {formatRupiah(donationStats.collected)}
+                        </span>
+                        <span className="text-xs font-bold text-success bg-success/10 px-2 py-0.5 rounded-full">
+                          {donationStats.percentage}%
+                        </span>
+                      </div>
                     </div>
+
+                    <p className="text-xs sm:text-sm text-muted-foreground">
+                      Target:{" "}
+                      <span className="font-bold text-foreground">
+                        {formatRupiah(donationStats.target)}
+                      </span>
+                    </p>
                   </div>
 
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    Target:{" "}
-                    <span className="font-bold text-foreground">
-                      {formatRupiah(target)}
-                    </span>
-                  </p>
+                  <Progress
+                    aria-label="Progress dukungan"
+                    value={donationStats.percentage}
+                    className="h-3"
+                    classNames={{
+                      track: "bg-atac-green-light rounded-full",
+                      indicator: "bg-gradient-to-r from-atac-green-dark to-atac-green rounded-full",
+                    }}
+                  />
                 </div>
 
-                <Progress
-                  aria-label="Progress dukungan"
-                  value={percentage}
-                  className="h-3"
-                  classNames={{
-                    track: "bg-atac-green-light rounded-full",
-                    indicator: "bg-gradient-to-r from-atac-green-dark to-atac-green rounded-full",
-                  }}
-                />
-              </div>
+                {/* Stats Counters */}
+                <div className="lg:col-span-5 grid grid-cols-3 divide-x divide-border border-t border-border pt-6 lg:border-t-0 lg:pt-0">
+                  {donationStats.stats.map((stat) => {
+                    const Icon = stat.icon;
 
-              {/* Stats Counters */}
-              <div className="lg:col-span-5 grid grid-cols-3 divide-x divide-border border-t border-border pt-6 lg:border-t-0 lg:pt-0">
-                {donationStats.map((stat) => {
-                  const Icon = stat.icon;
+                    return (
+                      <div
+                        key={stat.label}
+                        className="flex flex-col items-center px-2 text-center"
+                      >
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary mb-2">
+                          <Icon size={18} />
+                        </div>
 
-                  return (
-                    <div
-                      key={stat.label}
-                      className="flex flex-col items-center px-2 text-center"
-                    >
-                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 text-primary mb-2">
-                        <Icon size={18} />
+                        <p className="text-base sm:text-lg font-bold text-foreground">
+                          {stat.value}
+                        </p>
+
+                        <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">
+                          {stat.label}
+                        </p>
                       </div>
+                    );
+                  })}
+                </div>
 
-                      <p className="text-base sm:text-lg font-bold text-foreground">
-                        {stat.value}
-                      </p>
-
-                      <p className="text-[11px] sm:text-xs text-muted-foreground font-medium">
-                        {stat.label}
-                      </p>
-                    </div>
-                  );
-                })}
               </div>
-
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

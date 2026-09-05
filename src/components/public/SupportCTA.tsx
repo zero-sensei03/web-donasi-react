@@ -44,7 +44,7 @@ export default function SupportCTA({
             </h2>
 
             {/* Description */}
-            <p className="mt-5 max-w-lg text-sm leading-7 text-slate-300 sm:text-base sm:leading-8">
+            <p className="mt-5 max-w-lg text-sm leading-6 text-slate-300 sm:text-base sm:leading-8">
               {CampaignData.supportCta.subTitle}
             </p>
 

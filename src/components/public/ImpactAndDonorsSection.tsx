@@ -17,15 +17,17 @@ export const ImpactAndDonorsSection = ({ CampaignData }: { CampaignData: Campaig
           {/* Header Section */}
           <div className="max-w-2xl mb-12">
             <div className="flex">
-              <span className="text-xs font-bold tracking-wider uppercase text-primary bg-atac-green-light block mb-2 py-1 px-2.5 rounded-full">
-                Persiapan Lomba
-              </span>
+              {CampaignData.support.tagline ? (
+                <span className="text-xs font-bold tracking-wider uppercase text-primary bg-atac-green-light block mb-2 py-1 px-2.5 rounded-full">
+                  {CampaignData.support.tagline}
+                </span>
+              ) : null}
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
               Bagaimana Dukungan Anda Bekerja
             </h2>
             <p className="text-muted-foreground text-sm mt-2 leading-relaxed">
-              Setiap bentuk dukungan disalurkan secara langsung untuk memenuhi kebutuhan esensial keberangkatan dan kompetisi tim ATAC.
+              {CampaignData.support.subTitle}
             </p>
           </div>
 

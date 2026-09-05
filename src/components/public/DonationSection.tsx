@@ -1,13 +1,19 @@
+import { useMemo } from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay } from "swiper/modules"
 import { Heart, Clock, ShieldAlert } from "lucide-react"
-import type { CampaignProps } from "@/pages/landing/Home"
+import { useGetDonationPublic } from "@/services/donation"
+import { useSiteStore } from "@/stores/data-site"
 
 import "swiper/css"
 
-export const DonationSection = ({ CampaignData }: { CampaignData: CampaignProps }) => {
-
-  return (
+export const DonationSection = () => {
+  const campaign = useSiteStore((state) => state.campaignData);
+  const { data } = useGetDonationPublic(campaign?.id || "")
+  const DONATION_FETCH = useMemo(() => {
+    return data?.data || []
+  }, [data])
+  return DONATION_FETCH.length > 0 ? (
     <section className="w-full">
       <div className="bg-white text-foreground py-16 border-t border-border/40">
         <div className="container mx-auto px-4 max-w-6xl">
@@ -51,18 +57,18 @@ export const DonationSection = ({ CampaignData }: { CampaignData: CampaignProps 
             }}
             className="w-full"
           >
-            {CampaignData.donations.map((donor) => (
-              <SwiperSlide key={donor.id}>
+            {DONATION_FETCH.map((donor, idx) => (
+              <SwiperSlide key={idx}>
                 <div className="p-4 rounded-2xl bg-gradient-to-br from-background to-card border border-border/60 hover:border-primary/40 transition-all flex flex-col justify-between gap-3 h-full shadow-sm group">
                   <div>
                     {/* Header Card Donatur */}
                     <div className="flex items-center justify-between gap-2 mb-2.5">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <div className="w-8 h-8 rounded-full bg-primary/10 text-primary font-bold text-xs flex items-center justify-center shrink-0 border border-primary/20">
-                          {(donor.name || "Anonymous")[0]}
+                          {(donor.donorName)[0]}
                         </div>
                         <p className="font-semibold text-xs text-foreground truncate">
-                          {donor.name ? donor.name : "Anonymous"}
+                          {donor.donorName}
                         </p>
                       </div>
                       <span className="text-xs font-bold text-primary shrink-0 bg-primary/5 px-2.5 py-1 rounded-md border border-primary/10">
@@ -72,14 +78,14 @@ export const DonationSection = ({ CampaignData }: { CampaignData: CampaignProps 
 
                     {/* Pesan / Doa Donatur (Jika ada) */}
                     <p className="text-xs text-atac-green italic line-clamp-2 leading-relaxed bg-atac-green-light/40 p-2.5 rounded-xl border border-border/30">
-                      "{donor.message}"
+                      "{donor.message || "-"}"
                     </p>
                   </div>
 
                   {/* Waktu Donasi */}
                   <div className="flex items-center gap-1 text-[10px] text-muted-foreground pt-1 border-t border-border/30">
                     <Clock size={12} />
-                    <span>{donor.timestamp}</span>
+                    <span>{donor.createdAt}</span>
                   </div>
                 </div>
               </SwiperSlide>
@@ -89,5 +95,5 @@ export const DonationSection = ({ CampaignData }: { CampaignData: CampaignProps 
         </div>
       </div>
     </section>
-  )
+  ) : null
 }

@@ -3,12 +3,12 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Ambil Build Arguments dari GitHub Actions / Docker Compose
-# Sesuaikan prefix variabel dengan bundler kamu (VITE_APP_API_URL untuk Vite, REACT_APP_API_URL untuk CRA)
-ARG VITE_APP_API_URL
+# Sesuaikan prefix variabel dengan bundler kamu (VITE_API_URL untuk Vite, REACT_APP_API_URL untuk CRA)
+ARG VITE_API_URL
 ARG VITE_APP_ENV
 
 # Set sebagai Environment Variable internal saat npm run build
-ENV VITE_APP_API_URL=$VITE_APP_API_URL
+ENV VITE_API_URL=https://api-donasi.meifadev.my.id/api
 ENV VITE_APP_ENV=$VITE_APP_ENV
 
 COPY package.json package-lock.json* ./

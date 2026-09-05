@@ -35,7 +35,7 @@ jobs:
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           # Mengirimkan variabel ENV ke Docker ARGS saat build time
           build-args: |
-            VITE_APP_API_URL=${{ secrets.VITE_APP_API_URL }}
+            VITE_API_URL=https://api-donasi.meifadev.my.id/api
             VITE_APP_ENV=production
 
       - name: Deploy to NAT VPS via SSH
