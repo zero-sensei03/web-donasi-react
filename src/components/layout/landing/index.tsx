@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { NavbarPublic } from './Navbar';
 import { FooterPublic } from './Footer';
 import Logo from '@/assets/images/dummy-logo.png';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, MessageCircleCheck } from 'lucide-react';
 import { ScrollToTop } from '@/components/ScrollToTop';
+import { useSiteStore } from '@/stores/data-site';
+import { useGetContactListPublic } from '@/services/contact-list';
 
 export interface siteSettingProps {
   logo: string;
@@ -67,31 +69,46 @@ const CONTACT_LIST = [
 ];
 
 export const LayoutPublic = () => {
+  const siteData = useSiteStore((state) => state.siteData);
+  const campaignData = useSiteStore((state) => state.campaignData);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const siteSetting: siteSettingProps = {
-    logo: Logo,
-    name: 'Dukung ATAC',
+    logo: siteData.app_logo || Logo,
+    name: siteData.app_name || 'Ayo Berdonasi',
 
-    address: 'Jl. Jendral Sudirman No. 123, Jakarta Selatan, Indonesia',
-    phone: '+62 812-3456-7890',
-    email: 'kontak@ayoberdonasi.com',
+    address: siteData.app_address || "-",
+    phone: siteData.app_phone || "-",
+    email: siteData.app_email || "-",
 
-    facebook: '#',
-    instagram: '#',
-    twitter: null,
-    youtube: null,
-    tiktok: '#',
+    facebook: siteData.app_facebook || null,
+    instagram: siteData.app_instagram || null,
+    twitter: siteData.app_twitter || null,
+    youtube: siteData.app_youtube || null,
+    tiktok: siteData.app_tiktok || null,
   };
+
+  const { data: dataContact } = useGetContactListPublic(campaignData?.id || null);
+  const CONTACT_LIST_FETCH = useMemo(() => {
+    return (dataContact?.data || []).map(item => ({
+      id: item.id,
+      name: item.name,
+      role: item.role,
+      type: item.type,
+      username: item.phone,
+      icon: item.type === "TELEGRAM" ? TelegramIcon : WhatsAppIcon,
+      badgeColor: item.type === "TELEGRAM" ? 'bg-sky-50 text-sky-600 border-sky-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200',
+    }))
+  }, [dataContact])
 
   // Handler Kirim Chat
   const handleContactClick = (item: (typeof CONTACT_LIST)[0]) => {
     let url = '';
 
-    if (item.type === 'whatsapp') {
-      const encodedMsg = encodeURIComponent(item.message || '');
-      url = `https://wa.me/${item.phone}?text=${encodedMsg}`;
-    } else if (item.type === 'telegram') {
+    if (item.type === 'WHATSAPP') {
+      url = `https://wa.me/${item.username}`;
+    } else if (item.type === 'TELEGRAM') {
       url = `https://t.me/${item.username}`;
     }
 
@@ -116,105 +133,107 @@ export const LayoutPublic = () => {
 
       {/* ================= FLOATING CONTACT WIDGET ================= */}
       {/* pointer-events-none pada container utama agar area kosong tidak memblokir tombol lain */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
-        {/* DROPDOWN MENU / POPUP LIST */}
-        <div
-          className={`mb-4 w-72 sm:w-80 rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden transition-all duration-300 transform origin-bottom-right ${
-            isOpen
-              ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto block'
-              : 'opacity-0 scale-95 translate-y-4 pointer-events-none hidden'
-          }`}
-        >
-          {/* Header Pop-up */}
-          <div className="bg-slate-900 p-4 text-white">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-                </span>
-                <h4 className="text-sm font-bold">Hubungi Tim Kami</h4>
-              </div>
+      {CONTACT_LIST_FETCH.length > 0 ? (
+        <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pointer-events-none">
+          {/* DROPDOWN MENU / POPUP LIST */}
+          <div
+            className={`mb-4 w-72 sm:w-80 rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden transition-all duration-300 transform origin-bottom-right ${
+              isOpen
+                ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto block'
+                : 'opacity-0 scale-95 translate-y-4 pointer-events-none hidden'
+            }`}
+          >
+            {/* Header Pop-up */}
+            <div className="bg-slate-900 p-4 text-white">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                  </span>
+                  <h4 className="text-sm font-bold">Hubungi Tim Kami</h4>
+                </div>
 
-              <button
-                onClick={() => setIsOpen(false)}
-                className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg"
-              >
-                <X size={16} />
-              </button>
-            </div>
-            <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
-              Silakan pilih saluran komunikasi yang tersedia di bawah ini.
-            </p>
-          </div>
-
-          {/* List Of Contacts */}
-          <div className="p-3 space-y-2 max-h-[320px] overflow-y-auto bg-slate-50/50">
-            {CONTACT_LIST.map((item) => {
-              const Icon = item.icon;
-              return (
                 <button
-                  key={item.id}
-                  onClick={() => handleContactClick(item)}
-                  className="w-full text-left p-3 rounded-xl bg-white border border-slate-200/80 hover:border-blue-500 hover:shadow-md transition-all flex items-center justify-between group cursor-pointer"
+                  onClick={() => setIsOpen(false)}
+                  className="text-slate-400 hover:text-white transition-colors p-1 rounded-lg"
                 >
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center border ${item.badgeColor} shrink-0`}
-                    >
-                      <Icon />
-                    </div>
-                    <div>
-                      <h5 className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                        {item.name}
-                      </h5>
-                      <p className="text-[10px] text-slate-500 font-medium">
-                        {item.role}
-                      </p>
-                    </div>
-                  </div>
-
-                  <ExternalLink
-                    size={14}
-                    className="text-slate-400 group-hover:text-blue-600 transition-colors shrink-0"
-                  />
+                  <X size={16} />
                 </button>
-              );
-            })}
-          </div>
+              </div>
+              <p className="text-[11px] text-slate-300 mt-1 leading-relaxed">
+                Silakan pilih saluran komunikasi yang tersedia di bawah ini.
+              </p>
+            </div>
 
-          {/* Footer Pop-up */}
-          <div className="p-2.5 bg-white border-t border-slate-100 text-center">
-            <span className="text-[10px] text-slate-400">
-              Tim ATAC Unsurya • Siap Membantu
-            </span>
-          </div>
-        </div>
+            {/* List Of Contacts */}
+            <div className="p-3 space-y-2 max-h-[320px] overflow-y-auto bg-slate-50/50">
+              {CONTACT_LIST_FETCH.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleContactClick(item)}
+                    className="w-full text-left p-3 rounded-xl bg-white border border-slate-200/80 hover:border-blue-500 hover:shadow-md transition-all flex items-center justify-between group cursor-pointer"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center border ${item.badgeColor} shrink-0`}
+                      >
+                        <Icon />
+                      </div>
+                      <div>
+                        <h5 className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                          {item.name}
+                        </h5>
+                        <p className="text-[10px] text-slate-500 font-medium">
+                          {item.role}
+                        </p>
+                      </div>
+                    </div>
 
-        {/* MAIN BUBBLE BUTTON */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className={`pointer-events-auto cursor-pointer relative group flex items-center justify-center w-14 h-14 rounded-full text-white shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 ${
-            isOpen
-              ? 'bg-slate-900 rotate-90'
-              : 'bg-emerald-600 hover:bg-emerald-500'
-          }`}
-          aria-label="Hubungi Kami"
-        >
-          {isOpen ? (
-            <X size={26} />
-          ) : (
-            <>
-              <WhatsAppIcon />
-              {/* Indicator Dot */}
-              <span className="absolute top-0 right-0 flex h-3.5 w-3.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
+                    <ExternalLink
+                      size={14}
+                      className="text-slate-400 group-hover:text-blue-600 transition-colors shrink-0"
+                    />
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Footer Pop-up */}
+            <div className="p-2.5 bg-white border-t border-slate-100 text-center">
+              <span className="text-[10px] text-slate-400">
+                Tim Kami Siap Membantu
               </span>
-            </>
-          )}
-        </button>
-      </div>
+            </div>
+          </div>
+
+          {/* MAIN BUBBLE BUTTON */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className={`pointer-events-auto cursor-pointer relative group flex items-center justify-center w-14 h-14 rounded-full text-white shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 ${
+              isOpen
+                ? 'bg-slate-900 rotate-90'
+                : 'bg-emerald-600 hover:bg-emerald-500'
+            }`}
+            aria-label="Hubungi Kami"
+          >
+            {isOpen ? (
+              <X size={26} />
+            ) : (
+              <>
+                <MessageCircleCheck />
+                {/* Indicator Dot */}
+                <span className="absolute top-0 right-0 flex h-3.5 w-3.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 };

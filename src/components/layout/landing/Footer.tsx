@@ -18,12 +18,15 @@ import { Divider } from '@heroui/react';
 import type { siteSettingProps } from '.';
 import { NavbarLandingMenu } from '@/constants/MenuConstant';
 import type { IconType } from 'react-icons';
+import { useSiteStore } from '@/stores/data-site';
 
 export const FooterPublic = ({
   siteSetting,
 }: {
   siteSetting: siteSettingProps;
 }) => {
+  const campaign = useSiteStore((state) => state.campaignData);
+  const navMenu = campaign ? NavbarLandingMenu : ( NavbarLandingMenu.filter(item => item.key === "home") || [] )
   const socialMedia: { icon: IconType; label: string; href: string }[] = [];
 
   if (siteSetting.facebook)
@@ -118,7 +121,7 @@ export const FooterPublic = ({
               Navigasi Utama
             </h4>
             <ul className="space-y-2 text-sm">
-              {NavbarLandingMenu.map((link, idx) => (
+              {navMenu.map((link, idx) => (
                 <li key={idx}>
                   <Link
                     to={link.url}

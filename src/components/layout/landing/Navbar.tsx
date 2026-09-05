@@ -5,12 +5,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { NavbarLandingMenu } from '@/constants/MenuConstant';
 import { cn } from '@heroui/react';
+import { useSiteStore } from '@/stores/data-site';
 
 export const NavbarPublic = ({
   siteSetting,
 }: {
   siteSetting: siteSettingProps;
 }) => {
+  const campaign = useSiteStore((state) => state.campaignData);
+  const navMenu = campaign ? NavbarLandingMenu : ( NavbarLandingMenu.filter(item => item.key === "home") || [] )
+
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -60,7 +65,7 @@ export const NavbarPublic = ({
 
         {/* Desktop Menu */}
         <nav className="hidden lg:flex items-center gap-6">
-          {NavbarLandingMenu.map((item) => {
+          {navMenu.map((item) => {
             const isActive = location.pathname === item.url;
 
             if (item.isButton) {
@@ -118,10 +123,10 @@ export const NavbarPublic = ({
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="md:hidden bg-background border-b border-gray-100 shadow-xl overflow-hidden mt-4"
+            className="lg:hidden bg-background border-b border-gray-100 shadow-xl overflow-hidden mt-4"
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
-              {NavbarLandingMenu.map((item) => {
+              {navMenu.map((item) => {
                 const isActive = location.pathname === item.url;
 
                 if (item.isButton) {
