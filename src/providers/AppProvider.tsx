@@ -1,5 +1,5 @@
 import React from 'react';
-import { HeroUIProvider } from '@heroui/react';
+import { HeroUIProvider, ToastProvider } from '@heroui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter } from 'react-router-dom';
@@ -18,6 +18,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
         <HeroUIProvider>
+          <ToastProvider />
           <BrowserRouter>{children}</BrowserRouter>
         </HeroUIProvider>
       </QueryClientProvider>

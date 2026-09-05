@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Card,
   CardBody,
@@ -14,6 +14,7 @@ import {
   ModalFooter,
   useDisclosure,
   addToast,
+  Skeleton,
 } from '@heroui/react';
 import {
   QrCode,
@@ -22,36 +23,20 @@ import {
   Check,
   Upload,
   Heart,
-  ShieldCheck,
   Send,
   AlertCircle,
 } from 'lucide-react';
 import { SEO } from '@/components/SEO';
 import { useSiteStore } from '@/stores/data-site';
 import { InactiveCampaignPage } from '@/components/public/EmptyCampaign';
+import { useGetPaymentPublic } from '@/services/payment';
+import { useStoreDonation } from '@/services/donation';
 
 // ==========================================
 // KONSTANTA DATA REKENING & QRIS (Statis)
 // ==========================================
 
 export default function DonationPage() {
-  const PAYMENT_DETAILS = {
-    qrisImage:
-      'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=00020101021126620016ID.CO.BANKBRI.WWW011893600002000001000002150000000000000053033605802ID5910ATACUNSURYA6007JAKARTA6105136106304C1C4',
-    qrisName: 'ATAC UNSURYA DONASI',
-    bankAccounts: [
-      {
-        bankName: 'Bank Mandiri',
-        accountNumber: '1230009876543',
-        accountHolder: 'Tim ATAC Unsurya',
-      },
-      {
-        bankName: 'Bank BCA',
-        accountNumber: '8830123456',
-        accountHolder: 'Tim ATAC Unsurya',
-      },
-    ],
-  };
   // Disclosures untuk Modal Konfirmasi
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -74,6 +59,16 @@ export default function DonationPage() {
     setTimeout(() => setCopiedIndex(null), 2000);
   };
 
+  const campaign = useSiteStore((state) => state.campaignData);
+  if(!campaign) {
+    return <InactiveCampaignPage />
+  }
+
+  const { data: dataPayment, isLoading: loadingDataPaymeny } = useGetPaymentPublic(campaign.id);
+  const FETCH_DATA_PAYMENT = useMemo(() => {
+    return dataPayment?.data || []
+  }, [dataPayment])
+
   // Pre-submit validation
   const handlePreSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,29 +83,51 @@ export default function DonationPage() {
     onOpen(); // Buka modal konfirmasi
   };
 
+  const [loading, setLoading] = useState(false);
+  const { mutateAsync } = useStoreDonation();
   // Final Submit Handler
   const handleFinalSubmit = () => {
-    onClose();
 
-    // Tampilkan Toast Sukses dari HeroUI
-    addToast({
-      title: 'Konfirmasi Terkirim! 🚀',
-      description:
-        'Terima kasih atas dukungan Anda. Data donasi akan segera kami verifikasi.',
-      color: 'success',
-    });
+    const payload = new FormData();
+    payload.append("campaignId", campaign.id);
+    payload.append("amount", amount);
+    payload.append("donorName", name);
+    payload.append("message", message);
+    if(file) {
+      payload.append("proof", file);
+    } 
 
-    // Reset Form
-    setName('');
-    setAmount('');
-    setMessage('');
-    setFile(null);
+    setLoading(true)
+
+    try {
+      mutateAsync(payload,
+        {
+          onSuccess: () => {
+            onClose();
+            addToast({
+              title: 'Konfirmasi Terkirim! 🚀',
+              description:
+                'Terima kasih atas dukungan Anda. Data donasi akan segera kami verifikasi.',
+              color: 'success',
+            });
+
+            // Reset Form
+            setName('');
+            setAmount('');
+            setMessage('');
+            setFile(null);
+          }
+        }
+      )
+    } catch (error: any) {
+      addToast({
+        title: error?.response?.data?.message || error?.message || "Internal server error",
+        color: 'danger'
+      })
+    } finally {
+      setLoading(false);
+    }
   };
-
-  const campaign = useSiteStore((state) => state.campaignData);
-  if(!campaign) {
-    return <InactiveCampaignPage />
-  }
 
   return (
     <>
@@ -163,22 +180,70 @@ export default function DonationPage() {
                         </div>
                       }
                     >
-                      <div className="pt-4 flex flex-col items-center text-center bg-white p-6 rounded-2xl border border-slate-200/80">
-                        <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm mb-3">
-                          <img
-                            src={PAYMENT_DETAILS.qrisImage}
-                            alt="QRIS Donasi"
-                            className="w-48 h-48 object-contain"
-                          />
+                      {loadingDataPaymeny ? (
+                        <div className="pt-4">
+                          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 flex flex-col items-center">
+                            <Skeleton className="rounded-xl mb-4">
+                              <div className="w-48 h-48 rounded-xl" />
+                            </Skeleton>
+
+                            <Skeleton className="rounded-md mb-2">
+                              <div className="w-32 h-4 rounded-md" />
+                            </Skeleton>
+
+                            <Skeleton className="rounded-md">
+                              <div className="w-64 h-3 rounded-md" />
+                            </Skeleton>
+                          </div>
                         </div>
-                        <span className="text-xs font-bold text-slate-900 mb-1">
-                          {PAYMENT_DETAILS.qrisName}
-                        </span>
-                        <p className="text-[11px] text-slate-500">
-                          Mendukung GoPay, OVO, Dana, ShopeePay, LinkAja, & Mobile
-                          Banking.
-                        </p>
-                      </div>
+                      ) : FETCH_DATA_PAYMENT.filter(item => item.type === "QRIS").length > 0 ? (
+                        <div className="pt-4 space-y-3">
+                          {FETCH_DATA_PAYMENT.filter(item => item.type === "QRIS").map((acc, idx) => (
+                            <div key={acc.id ?? idx} className="flex flex-col items-center text-center bg-white p-6 rounded-2xl border border-slate-200/80">
+                              <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm mb-3">
+                                {acc.qrisImage ? (
+                                  <img
+                                    src={acc.qrisImage}
+                                    alt="QRIS Donasi"
+                                    className="w-48 h-48 object-contain"
+                                  />
+                                  ) : (
+                                    <QrCode
+                                      size={32}
+                                      className="mx-auto mb-3 text-slate-300"
+                                    />
+                                  )
+                                }
+                              </div>
+
+                              <span className="text-xs font-bold text-slate-900 mb-1">
+                                {acc.name}
+                              </span>
+
+                              <p className="text-[11px] text-slate-500">
+                                {acc.description}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="pt-4">
+                          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 text-center">
+                            <QrCode
+                              size={32}
+                              className="mx-auto mb-3 text-slate-300"
+                            />
+
+                            <p className="text-sm font-semibold text-slate-700">
+                              QRIS Tidak Tersedia
+                            </p>
+
+                            <p className="text-xs text-slate-400 mt-1">
+                              Metode pembayaran QRIS belum tersedia untuk campaign ini.
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </Tab>
 
                     {/* TAB TRANSFER BANK */}
@@ -191,55 +256,92 @@ export default function DonationPage() {
                         </div>
                       }
                     >
-                      <div className="pt-4 space-y-3">
-                        {PAYMENT_DETAILS.bankAccounts.map((acc, idx) => (
-                          <div
-                            key={idx}
-                            className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between"
-                          >
-                            <div>
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 block">
-                                {acc.bankName}
-                              </span>
-                              <span className="text-base font-mono font-bold text-slate-900 block mt-0.5">
-                                {acc.accountNumber}
-                              </span>
-                              <span className="text-xs text-slate-500 font-medium">
-                                a.n. {acc.accountHolder}
-                              </span>
-                            </div>
-
-                            <Button
-                              isIconOnly
-                              size="sm"
-                              variant="flat"
-                              onClick={() =>
-                                handleCopy(acc.accountNumber, `acc-${idx}`)
-                              }
-                              className="bg-slate-100 hover:bg-slate-200 text-slate-700"
+                      {loadingDataPaymeny ? (
+                        <div className="pt-4 space-y-3">
+                          {Array.from({ length: 2 }).map((_, index) => (
+                            <div
+                              key={index}
+                              className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between"
                             >
-                              {copiedIndex === `acc-${idx}` ? (
-                                <Check size={16} className="text-emerald-600" />
-                              ) : (
-                                <Copy size={16} />
-                              )}
-                            </Button>
+                              <div className="flex-1">
+                                <Skeleton className="rounded-md mb-2">
+                                  <div className="w-20 h-3 rounded-md" />
+                                </Skeleton>
+
+                                <Skeleton className="rounded-md mb-2">
+                                  <div className="w-36 h-5 rounded-md" />
+                                </Skeleton>
+
+                                <Skeleton className="rounded-md">
+                                  <div className="w-28 h-3 rounded-md" />
+                                </Skeleton>
+                              </div>
+
+                              <Skeleton className="rounded-lg">
+                                <div className="w-8 h-8 rounded-lg" />
+                              </Skeleton>
+                            </div>
+                          ))}
+                        </div>
+                      ) : FETCH_DATA_PAYMENT.filter(item => item.type === "BANK_TRANSFER").length > 0 ? (
+                        <div className="pt-4 space-y-3">
+                          {FETCH_DATA_PAYMENT.filter(item => item.type === "BANK_TRANSFER").map((acc, idx) => (
+                            <div
+                              key={acc.id ?? idx}
+                              className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between"
+                            >
+                              <div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 block">
+                                  {acc.bankName}
+                                </span>
+
+                                <span className="text-base font-mono font-bold text-slate-900 block mt-0.5">
+                                  {acc.accountNumber}
+                                </span>
+
+                                <span className="text-xs text-slate-500 font-medium">
+                                  a.n. {acc.name}
+                                </span>
+                              </div>
+
+                              <Button
+                                isIconOnly
+                                size="sm"
+                                variant="flat"
+                                onPress={() =>
+                                  handleCopy(acc.accountNumber || "", `acc-${idx}`)
+                                }
+                                className="bg-slate-100 hover:bg-slate-200 text-slate-700"
+                              >
+                                {copiedIndex === `acc-${idx}` ? (
+                                  <Check size={16} className="text-emerald-600" />
+                                ) : (
+                                  <Copy size={16} />
+                                )}
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="pt-4">
+                          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 text-center">
+                            <Building2
+                              size={32}
+                              className="mx-auto mb-3 text-slate-300"
+                            />
+
+                            <p className="text-sm font-semibold text-slate-700">
+                              Rekening Tidak Tersedia
+                            </p>
+
+                            <p className="text-xs text-slate-400 mt-1">
+                              Belum ada rekening transfer yang tersedia untuk campaign ini.
+                            </p>
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      )}
                     </Tab>
                   </Tabs>
-
-                  <div className="mt-6 flex items-start gap-2.5 p-3.5 rounded-xl bg-blue-50/60 border border-blue-100 text-blue-900 text-xs">
-                    <ShieldCheck
-                      size={18}
-                      className="text-blue-600 shrink-0 mt-0.5"
-                    />
-                    <p className="leading-relaxed">
-                      Setiap dana yang masuk dialokasikan 100% untuk kebutuhan
-                      riset, pembelian bahan baku UAV, dan operasional kompetisi.
-                    </p>
-                  </div>
                 </CardBody>
               </Card>
             </div>
@@ -329,6 +431,7 @@ export default function DonationPage() {
                     {/* Button Kirim */}
                     <Button
                       type="submit"
+                      isLoading={loading}
                       size="lg"
                       className="w-full bg-blue-600 text-white font-semibold text-sm shadow-md shadow-blue-500/20 hover:bg-blue-500"
                       endContent={<Send size={16} />}
@@ -391,7 +494,8 @@ export default function DonationPage() {
                 variant="flat"
                 color="default"
                 size="sm"
-                onClick={onClose}
+                onPress={onClose}
+                isLoading={loading}
                 className="font-medium"
               >
                 Cek Kembali
@@ -399,7 +503,8 @@ export default function DonationPage() {
               <Button
                 color="primary"
                 size="sm"
-                onClick={handleFinalSubmit}
+                onPress={handleFinalSubmit}
+                isLoading={loading}
                 className="bg-blue-600 font-semibold"
               >
                 Ya, Sudah Benar
