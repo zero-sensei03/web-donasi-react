@@ -1,6 +1,6 @@
 // src/store/auth.ts
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 type User = {
   email: string;
@@ -36,7 +36,7 @@ export const useAuthStore = create<AuthState>()(
         }),
     }),
     {
-      name: "web-donasi-auth",
+      name: 'web-donasi-auth',
       partialize: (state) => ({
         user: state.user,
         token: state.token,

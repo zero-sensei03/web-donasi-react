@@ -1,4 +1,3 @@
-import { useSiteStore } from '@/stores/data-site';
 import { Helmet } from 'react-helmet-async';
 
 interface SEOProps {
@@ -7,7 +6,12 @@ interface SEOProps {
   keywords?: string;
   image?: string;
   canonical?: string;
+  noIndex?: boolean;
 }
+
+const SITE_URL = 'https://donasi.meifadev.my.id';
+const SITE_NAME = 'Ayo Berdonasi';
+const DEFAULT_IMAGE = `${SITE_URL}/og-image.webp`;
 
 export function SEO({
   title,
@@ -15,97 +19,78 @@ export function SEO({
   keywords,
   image,
   canonical,
+  noIndex = false,
 }: SEOProps) {
-  const siteData = useSiteStore((state) => state.siteData);
+  const fullTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
 
-  const siteUrl = 'https://dukung-atac.com';
+  const metaImage = image || DEFAULT_IMAGE;
 
-  const fullTitle = `${siteData.app_name || 'Dukung ATAC'} | ${title}`;
-
-  const metaImage =
-    image || `${siteUrl}/og-image.webp`;
-
-  const favicon =
-    siteData.app_logo || `${siteUrl}/favicon.ico`;
+  const canonicalUrl = canonical
+    ? canonical.startsWith('http')
+      ? canonical
+      : `${SITE_URL}${canonical.startsWith('/') ? canonical : `/${canonical}`}`
+    : SITE_URL;
 
   return (
     <Helmet>
+      {/* Primary SEO */}
       <title>{fullTitle}</title>
 
+      <meta name="description" content={description} />
+
+      {keywords && <meta name="keywords" content={keywords} />}
+
       <meta
-        name="description"
-        content={description}
+        name="robots"
+        content={
+          noIndex
+            ? 'noindex, nofollow'
+            : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+        }
       />
 
-      {keywords && (
-        <meta
-          name="keywords"
-          content={keywords}
-        />
-      )}
-
-      {canonical && (
-        <link
-          rel="canonical"
-          href={`${siteUrl}${canonical}`}
-        />
-      )}
-
-      {/* Favicon */}
-      <link
-        key="favicon"
-        rel="icon"
-        type="image/webp"
-        href={favicon}
-      />
-
-      <link
-        key="apple-touch-icon"
-        rel="apple-touch-icon"
-        href={favicon}
-      />
+      <link rel="canonical" href={canonicalUrl} />
 
       {/* Open Graph */}
-      <meta
-        property="og:type"
-        content="website"
-      />
+      <meta property="og:type" content="website" />
 
-      <meta
-        property="og:title"
-        content={fullTitle}
-      />
+      <meta property="og:site_name" content={SITE_NAME} />
 
-      <meta
-        property="og:description"
-        content={description}
-      />
+      <meta property="og:locale" content="id_ID" />
 
-      <meta
-        property="og:image"
-        content={metaImage}
-      />
+      <meta property="og:title" content={fullTitle} />
 
-      {/* Twitter */}
-      <meta
-        name="twitter:card"
-        content="summary_large_image"
-      />
+      <meta property="og:description" content={description} />
 
-      <meta
-        name="twitter:title"
-        content={fullTitle}
-      />
+      <meta property="og:url" content={canonicalUrl} />
 
-      <meta
-        name="twitter:description"
-        content={description}
-      />
+      <meta property="og:image" content={metaImage} />
 
-      <meta
-        name="twitter:image"
-        content={metaImage}
-      />
+      <meta property="og:image:secure_url" content={metaImage} />
+
+      <meta property="og:image:type" content="image/webp" />
+
+      <meta property="og:image:width" content="1200" />
+
+      <meta property="og:image:height" content="630" />
+
+      <meta property="og:image:alt" content={fullTitle} />
+
+      {/* Twitter / X */}
+      <meta name="twitter:card" content="summary_large_image" />
+
+      <meta name="twitter:title" content={fullTitle} />
+
+      <meta name="twitter:description" content={description} />
+
+      <meta name="twitter:image" content={metaImage} />
+
+      <meta name="twitter:image:alt" content={fullTitle} />
+
+      {/* Favicon */}
+      <link rel="icon" href="/favicon.ico" />
+
+      <link rel="apple-touch-icon" href="/favicon.ico" />
     </Helmet>
   );
 }

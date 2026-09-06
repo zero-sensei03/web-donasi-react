@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dukung-atac.com/sitemap.xml
+Sitemap: https://donasi.meifadev.my.id/sitemap.xml

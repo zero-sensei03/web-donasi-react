@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { NavbarPublic } from './Navbar';
 import { FooterPublic } from './Footer';
-import Logo from '@/assets/images/dummy-logo.png';
+import Logo from '@/assets/images/logo.webp';
 import { X, ExternalLink, MessageCircleCheck } from 'lucide-react';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { useSiteStore } from '@/stores/data-site';
@@ -78,9 +78,9 @@ export const LayoutPublic = () => {
     logo: siteData.app_logo || Logo,
     name: siteData.app_name || 'Ayo Berdonasi',
 
-    address: siteData.app_address || "-",
-    phone: siteData.app_phone || "-",
-    email: siteData.app_email || "-",
+    address: siteData.app_address || '-',
+    phone: siteData.app_phone || '-',
+    email: siteData.app_email || '-',
 
     facebook: siteData.app_facebook || null,
     instagram: siteData.app_instagram || null,
@@ -89,18 +89,23 @@ export const LayoutPublic = () => {
     tiktok: siteData.app_tiktok || null,
   };
 
-  const { data: dataContact } = useGetContactListPublic(campaignData?.id || null);
+  const { data: dataContact } = useGetContactListPublic(
+    campaignData?.id || null
+  );
   const CONTACT_LIST_FETCH = useMemo(() => {
-    return (dataContact?.data || []).map(item => ({
+    return (dataContact?.data || []).map((item) => ({
       id: item.id,
       name: item.name,
       role: item.role,
       type: item.type,
       username: item.phone,
-      icon: item.type === "TELEGRAM" ? TelegramIcon : WhatsAppIcon,
-      badgeColor: item.type === "TELEGRAM" ? 'bg-sky-50 text-sky-600 border-sky-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200',
-    }))
-  }, [dataContact])
+      icon: item.type === 'TELEGRAM' ? TelegramIcon : WhatsAppIcon,
+      badgeColor:
+        item.type === 'TELEGRAM'
+          ? 'bg-sky-50 text-sky-600 border-sky-200'
+          : 'bg-emerald-50 text-emerald-600 border-emerald-200',
+    }));
+  }, [dataContact]);
 
   // Handler Kirim Chat
   const handleContactClick = (item: (typeof CONTACT_LIST)[0]) => {

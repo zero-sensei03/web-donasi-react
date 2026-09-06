@@ -1,11 +1,6 @@
 import { useMemo } from 'react';
 import { Card, CardBody, Button, Chip } from '@heroui/react';
-import {
-  FileText,
-  ExternalLink,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react';
+import { FileText, ExternalLink, ShieldCheck, Sparkles } from 'lucide-react';
 import { SEO } from '@/components/SEO';
 import { useSiteStore } from '@/stores/data-site';
 import { InactiveCampaignPage } from '@/components/public/EmptyCampaign';
@@ -19,17 +14,22 @@ import ContentNotFound from '@/components/ContentNotFound';
 export default function ProposalPage() {
   const campaign = useSiteStore((state) => state.campaignData);
 
-  const { data: proposalData, isLoading } = useGetProposalPublic(campaign?.id || "");
+  const { data: proposalData, isLoading } = useGetProposalPublic(
+    campaign?.id || ''
+  );
   const PROPOSAL_FETCH = useMemo(() => {
     return proposalData?.data || [];
-  }, [proposalData])
+  }, [proposalData]);
 
-  if(!campaign) {
-    return <InactiveCampaignPage />
+  if (!campaign) {
+    return <InactiveCampaignPage />;
   }
   return (
     <>
-      <SEO title="Proposal Kegiatan" description="Lihat informasi dan proposal kegiatan yang menjadi tujuan dukungan dan donasi untuk mewujudkan program yang bermanfaat." />
+      <SEO
+        title="Proposal Kegiatan"
+        description="Lihat informasi dan proposal kegiatan yang menjadi tujuan dukungan dan donasi untuk mewujudkan program yang bermanfaat."
+      />
       <div className="w-full bg-white text-slate-900 min-h-screen pt-28 pb-16 lg:pt-32 lg:pb-24">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* ================= HEADER ================= */}
@@ -51,9 +51,9 @@ export default function ProposalPage() {
               <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mb-3" />
               <span>Memuat Dokumen Proposal...</span>
             </div>
-          ) : PROPOSAL_FETCH.length > 0 ?(
+          ) : PROPOSAL_FETCH.length > 0 ? (
             <div className="flex flex-col space-y-12">
-              {PROPOSAL_FETCH.map(item => (
+              {PROPOSAL_FETCH.map((item) => (
                 <div key={item.id}>
                   <div className="text-center max-w-3xl mx-auto mb-10">
                     <p className="text-base sm:text-xl font-semibold text-primary mb-4">
@@ -79,7 +79,6 @@ export default function ProposalPage() {
                         Buka di Tab Baru
                       </Button>
                     </div>
-
                   </div>
                   <Card
                     className="bg-slate-50 border border-slate-200 shadow-xl rounded-3xl overflow-hidden"
@@ -113,7 +112,9 @@ export default function ProposalPage() {
                 </div>
               ))}
             </div>
-          ) : <ContentNotFound />}
+          ) : (
+            <ContentNotFound />
+          )}
         </div>
       </div>
     </>

@@ -1,12 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { getSiteSettingPublic } from "./http";
+import { useQuery } from '@tanstack/react-query';
+import { getSiteSettingPublic } from './http';
 
 export const useGetSiteSettingPublic = () => {
   return useQuery({
-    queryKey: ["site-setting"],
+    queryKey: ['site-setting'],
     queryFn: () => getSiteSettingPublic(),
-    staleTime: 1000 * 60 * 60
-  })
+    staleTime: 1000 * 60 * 60,
+  });
 };
-
-
