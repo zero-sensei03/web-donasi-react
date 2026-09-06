@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+>
   <url>
-    <loc>https://dukung-atac.com/</loc>
-    <priority>1.0</priority>
+    <loc>https://donasi.meifadev.my.id/</loc>
   </url>
+
   <url>
-    <loc>https://dukung-atac.com/about-us</loc>
-    <priority>0.8</priority>
+    <loc>https://donasi.meifadev.my.id/about-us</loc>
   </url>
+
   <url>
-    <loc>https://dukung-atac.com/gallery</loc>
-    <priority>0.7</priority>
+    <loc>https://donasi.meifadev.my.id/gallery</loc>
   </url>
+
   <url>
-    <loc>https://dukung-atac.com/proposal</loc>
-    <priority>0.8</priority>
+    <loc>https://donasi.meifadev.my.id/proposal</loc>
   </url>
+
   <url>
-    <loc>https://dukung-atac.com/donation-support</loc>
-    <priority>0.9</priority>
+    <loc>https://donasi.meifadev.my.id/donation-support</loc>
   </url>
 </urlset>

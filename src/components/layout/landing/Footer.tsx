@@ -26,7 +26,9 @@ export const FooterPublic = ({
   siteSetting: siteSettingProps;
 }) => {
   const campaign = useSiteStore((state) => state.campaignData);
-  const navMenu = campaign ? NavbarLandingMenu : ( NavbarLandingMenu.filter(item => item.key === "home") || [] )
+  const navMenu = campaign
+    ? NavbarLandingMenu
+    : NavbarLandingMenu.filter((item) => item.key === 'home') || [];
   const socialMedia: { icon: IconType; label: string; href: string }[] = [];
 
   if (siteSetting.facebook)

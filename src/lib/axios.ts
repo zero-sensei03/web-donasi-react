@@ -1,14 +1,21 @@
-import axios from "axios";
-import { useAuthStore } from "@/stores/auth";
-import { authRefreshToken } from "@/services/auth/http";
+import axios from 'axios';
+import { useAuthStore } from '@/stores/auth';
+import { authRefreshToken } from '@/services/auth/http';
 
-const publicRoutes = ["/", "/about-us", "/gallery", "/proposal", "/donation-support", "/auth/sign-in"];
+const publicRoutes = [
+  '/',
+  '/about-us',
+  '/gallery',
+  '/proposal',
+  '/donation-support',
+  '/auth/sign-in',
+];
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
   withCredentials: true,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -29,13 +36,15 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const { data: getRefreshToken } = await authRefreshToken(auth.token?.refreshToken || "");
+        const { data: getRefreshToken } = await authRefreshToken(
+          auth.token?.refreshToken || ''
+        );
         const accessToken = getRefreshToken.accessToken;
         const refreshToken = getRefreshToken.refreshToken;
         const user = getRefreshToken.user;
 
         if (!user) {
-          throw new Error("User is null during token refresh.");
+          throw new Error('User is null during token refresh.');
         }
 
         auth.setAuth({
@@ -46,7 +55,7 @@ api.interceptors.response.use(
           user: user,
         });
 
-        originalRequest.headers["Authorization"] = `Bearer ${accessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
 
         return api(originalRequest);
       } catch (refreshError) {
@@ -55,7 +64,7 @@ api.interceptors.response.use(
         const currentPath = window.location.pathname;
         if (!publicRoutes.includes(currentPath)) {
           auth.logout();
-            window.location.href = "/auth/sign-in";
+          window.location.href = '/auth/sign-in';
         }
 
         return Promise.reject(refreshError);
@@ -76,7 +85,7 @@ const redirectIfNotPublic = () => {
   const currentPath = window.location.pathname;
   if (!publicRoutes.includes(currentPath)) {
     auth.logout();
-    window.location.href = "/auth/sign-in";
+    window.location.href = '/auth/sign-in';
   }
 };
 

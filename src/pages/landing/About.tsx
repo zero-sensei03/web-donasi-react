@@ -12,7 +12,7 @@ import { SEO } from '@/components/SEO';
 import { useSiteStore } from '@/stores/data-site';
 import { InactiveCampaignPage } from '@/components/public/EmptyCampaign';
 import { useMemo } from 'react';
-import HeroAbout from "@/assets/images/hero-about.webp";
+import HeroAbout from '@/assets/images/hero-about.webp';
 
 // ==========================================
 // KONSTANTA DATA (Simulasi Data dari Backend)
@@ -22,37 +22,47 @@ export default function AboutUsPage() {
   const navigate = useNavigate();
 
   const campaign = useSiteStore((state) => state.campaignData);
-  if(!campaign) {
-    return <InactiveCampaignPage />
+  if (!campaign) {
+    return <InactiveCampaignPage />;
   }
 
   const data = useMemo(() => {
     const aboutData = campaign.aboutUsSection;
     return {
       title: aboutData?.heroTitle || 'Tentang Kami',
-      description: aboutData?.heroDescription || "Kami hadir untuk mendukung berbagai inisiatif, kegiatan, dan perjuangan positif melalui dukungan bersama. Setiap kontribusi menjadi bagian dari langkah nyata untuk mewujudkan harapan, mengembangkan potensi, dan menciptakan dampak yang lebih berarti bagi banyak orang",
+      description:
+        aboutData?.heroDescription ||
+        'Kami hadir untuk mendukung berbagai inisiatif, kegiatan, dan perjuangan positif melalui dukungan bersama. Setiap kontribusi menjadi bagian dari langkah nyata untuk mewujudkan harapan, mengembangkan potensi, dan menciptakan dampak yang lebih berarti bagi banyak orang',
       tagline: aboutData?.heroTagline || null,
       heroImage: aboutData?.heroBgImage || HeroAbout,
 
       // 5. Vision
-      vision: aboutData?.vision || 'Menjadi wadah donasi yang terpercaya dan mudah diakses untuk menghubungkan kebaikan dengan mereka yang membutuhkan, serta mendorong terciptanya perubahan positif yang berkelanjutan.',
+      vision:
+        aboutData?.vision ||
+        'Menjadi wadah donasi yang terpercaya dan mudah diakses untuk menghubungkan kebaikan dengan mereka yang membutuhkan, serta mendorong terciptanya perubahan positif yang berkelanjutan.',
 
       // 6. Mission
-      mission: aboutData?.mission && aboutData.mission.length > 0 ? aboutData.mission : [
-        'Memudahkan setiap orang untuk berbagi dan memberikan dukungan kepada berbagai inisiatif yang membutuhkan.',
-        'Membangun budaya kepedulian, gotong royong, dan semangat berbagi di tengah masyarakat.',
-        'Menyalurkan dukungan secara transparan dan tepat guna agar memberikan manfaat serta dampak yang nyata.',
-      ],
+      mission:
+        aboutData?.mission && aboutData.mission.length > 0
+          ? aboutData.mission
+          : [
+              'Memudahkan setiap orang untuk berbagi dan memberikan dukungan kepada berbagai inisiatif yang membutuhkan.',
+              'Membangun budaya kepedulian, gotong royong, dan semangat berbagi di tengah masyarakat.',
+              'Menyalurkan dukungan secara transparan dan tepat guna agar memberikan manfaat serta dampak yang nyata.',
+            ],
 
       // 7. Our Team
       team: aboutData?.CampaignTim || [],
       divisions: aboutData?.WorkStructureDivision || [],
-    }
-  }, [campaign])
+    };
+  }, [campaign]);
 
   return (
     <>
-      <SEO title="Tentang Kami" description="Kenali kami lebih dekat dan temukan bagaimana dukungan serta donasi dapat membantu mewujudkan berbagai kegiatan dan tujuan sosial." />
+      <SEO
+        title="Tentang Kami"
+        description="Kenali kami lebih dekat dan temukan bagaimana dukungan serta donasi dapat membantu mewujudkan berbagai kegiatan dan tujuan sosial."
+      />
       <div className="w-full bg-white text-foreground min-h-screen">
         <section className="relative pt-28 pb-16 lg:pt-40 lg:pb-24 overflow-hidden shadow-sm">
           <div className="container mx-auto px-4 max-w-7xl relative z-10">
@@ -167,7 +177,7 @@ export default function AboutUsPage() {
             </div>
           </div>
         </section>
-        
+
         {data.team.length > 0 && (
           <section className="py-16 sm:py-24 border-b border-slate-100">
             <div className="container mx-auto px-4 max-w-6xl">
@@ -189,7 +199,10 @@ export default function AboutUsPage() {
                   >
                     <CardBody className="p-5 text-center flex flex-col items-center">
                       <Avatar
-                        src={member.image || `https://ui-avatars.com/api/?background=random&name=${member.name}`}
+                        src={
+                          member.image ||
+                          `https://ui-avatars.com/api/?background=random&name=${member.name}`
+                        }
                         className="w-24 h-24 text-large mb-4 ring-4 ring-green-50"
                       />
                       <h3 className="text-base font-bold text-foreground leading-tight">

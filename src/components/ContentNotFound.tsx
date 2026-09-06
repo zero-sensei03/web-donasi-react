@@ -1,5 +1,5 @@
-import { Card, CardBody } from "@heroui/react";
-import { FileSearch } from "lucide-react";
+import { Card, CardBody } from '@heroui/react';
+import { FileSearch } from 'lucide-react';
 
 export default function ContentNotFound() {
   return (
@@ -16,8 +16,8 @@ export default function ContentNotFound() {
         </h1>
 
         <p className="mt-3 text-sm leading-6 text-slate-500 sm:text-base">
-          Maaf, konten yang kamu cari belum tersedia untuk saat ini.
-          Silakan kembali lagi nanti untuk melihat informasi terbaru.
+          Maaf, konten yang kamu cari belum tersedia untuk saat ini. Silakan
+          kembali lagi nanti untuk melihat informasi terbaru.
         </p>
       </CardBody>
     </Card>

@@ -53,8 +53,8 @@ export interface CampaignProps {
 export default function Home() {
   const campaign = useSiteStore((state) => state.campaignData);
 
-  if(!campaign) {
-    return <InactiveCampaignPage />
+  if (!campaign) {
+    return <InactiveCampaignPage />;
   }
 
   const CampaignData: CampaignProps = useMemo(() => {
@@ -63,47 +63,61 @@ export default function Home() {
       hero: {
         image: homeData?.heroBgImage || HeroImage,
         tagline: homeData?.heroTagline || null,
-        title: homeData?.heroTitle || "Ayo Berdonasi Bersama",
-        description: homeData?.heroDescription || "Mari bersama memberikan dukungan untuk mewujudkan berbagai langkah, impian, dan kegiatan positif. Setiap donasi yang diberikan dapat menjadi bagian penting dalam membantu mereka yang membutuhkan serta mendukung terciptanya perubahan yang lebih baik.",
+        title: homeData?.heroTitle || 'Ayo Berdonasi Bersama',
+        description:
+          homeData?.heroDescription ||
+          'Mari bersama memberikan dukungan untuk mewujudkan berbagai langkah, impian, dan kegiatan positif. Setiap donasi yang diberikan dapat menjadi bagian penting dalam membantu mereka yang membutuhkan serta mendukung terciptanya perubahan yang lebih baik.',
         mission: campaign.aboutUsSection?.vision || null,
       },
       supportCta: {
         tagline: homeData?.ctaSectionTagline || null,
-        title: homeData?.ctaSectionTitle || 'Bersama, Wujudkan Harapan Lebih Besar!',
-        subTitle: homeData?.ctaSectionSubtitle || "Setiap dukungan yang diberikan menjadi bagian dari sebuah perjalanan menuju perubahan yang lebih baik. Bersama Anda, setiap langkah kecil dapat menjadi kekuatan untuk mewujudkan harapan, mendukung karya positif, dan menciptakan dampak yang lebih berarti.",
+        title:
+          homeData?.ctaSectionTitle || 'Bersama, Wujudkan Harapan Lebih Besar!',
+        subTitle:
+          homeData?.ctaSectionSubtitle ||
+          'Setiap dukungan yang diberikan menjadi bagian dari sebuah perjalanan menuju perubahan yang lebih baik. Bersama Anda, setiap langkah kecil dapat menjadi kekuatan untuk mewujudkan harapan, mendukung karya positif, dan menciptakan dampak yang lebih berarti.',
         image: homeData?.ctaSectionBgImage || CTAHome,
       },
       why: {
-        description: homeData?.whyHomeDescription || "Setiap dukungan, sekecil apa pun, memiliki arti dalam mewujudkan harapan dan menciptakan perubahan yang lebih baik. Bersama, kita dapat memberikan dampak nyata bagi mereka yang membutuhkan",
-        card: (homeData?.whySection || []).map(item => ({
+        description:
+          homeData?.whyHomeDescription ||
+          'Setiap dukungan, sekecil apa pun, memiliki arti dalam mewujudkan harapan dan menciptakan perubahan yang lebih baik. Bersama, kita dapat memberikan dampak nyata bagi mereka yang membutuhkan',
+        card: (homeData?.whySection || []).map((item) => ({
           ...item,
-          icon: item.icon || Logo
-        }))
+          icon: item.icon || Logo,
+        })),
       },
       support: {
         tagline: homeData?.supportWorkTagline || null,
-        subTitle: homeData?.supportWorkDescription || "Setiap dukungan yang diberikan akan disalurkan untuk membantu memenuhi kebutuhan dan mendukung terlaksananya kegiatan secara tepat guna, sehingga setiap kontribusi dapat memberikan manfaat dan dampak yang nyata",
-  
-        items: (homeData?.supportWorkSection || []).map(item => ({
+        subTitle:
+          homeData?.supportWorkDescription ||
+          'Setiap dukungan yang diberikan akan disalurkan untuk membantu memenuhi kebutuhan dan mendukung terlaksananya kegiatan secara tepat guna, sehingga setiap kontribusi dapat memberikan manfaat dan dampak yang nyata',
+
+        items: (homeData?.supportWorkSection || []).map((item) => ({
           ...item,
           id: item.order.toString(),
-          image: item.icon || Logo
+          image: item.icon || Logo,
         })),
       },
-    }
-  }, [campaign])
+    };
+  }, [campaign]);
 
   return (
     <>
-      <SEO title="Home" description="Mari berbagi kebaikan dan berkontribusi melalui donasi untuk mendukung berbagai kegiatan dan tujuan yang berarti." />
+      <SEO
+        title="Home"
+        description="Mari berbagi kebaikan dan berkontribusi melalui donasi untuk mendukung berbagai kegiatan dan tujuan yang berarti."
+      />
 
       <div className="flex flex-col">
         <HomeHero CampaignData={CampaignData} />
         <WhySectionHome CampaignData={CampaignData} />
-        {CampaignData.support.items.length > 0 && <ImpactAndDonorsSection CampaignData={CampaignData} />}
+        {CampaignData.support.items.length > 0 && (
+          <ImpactAndDonorsSection CampaignData={CampaignData} />
+        )}
         <SupportCTA CampaignData={CampaignData} />
         <DonationSection />
       </div>
     </>
-  )
+  );
 }

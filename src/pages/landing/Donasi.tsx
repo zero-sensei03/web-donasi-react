@@ -60,14 +60,15 @@ export default function DonationPage() {
   };
 
   const campaign = useSiteStore((state) => state.campaignData);
-  if(!campaign) {
-    return <InactiveCampaignPage />
+  if (!campaign) {
+    return <InactiveCampaignPage />;
   }
 
-  const { data: dataPayment, isLoading: loadingDataPaymeny } = useGetPaymentPublic(campaign.id);
+  const { data: dataPayment, isLoading: loadingDataPaymeny } =
+    useGetPaymentPublic(campaign.id);
   const FETCH_DATA_PAYMENT = useMemo(() => {
-    return dataPayment?.data || []
-  }, [dataPayment])
+    return dataPayment?.data || [];
+  }, [dataPayment]);
 
   // Pre-submit validation
   const handlePreSubmit = (e: React.FormEvent) => {
@@ -87,51 +88,54 @@ export default function DonationPage() {
   const { mutateAsync } = useStoreDonation();
   // Final Submit Handler
   const handleFinalSubmit = () => {
-
     const payload = new FormData();
-    payload.append("campaignId", campaign.id);
-    payload.append("amount", amount);
-    payload.append("donorName", name);
-    payload.append("message", message);
-    if(file) {
-      payload.append("proof", file);
-    } 
+    payload.append('campaignId', campaign.id);
+    payload.append('amount', amount);
+    payload.append('donorName', name);
+    payload.append('message', message);
+    if (file) {
+      payload.append('proof', file);
+    }
 
-    setLoading(true)
+    setLoading(true);
 
     try {
-      mutateAsync(payload,
-        {
-          onSuccess: () => {
-            onClose();
-            addToast({
-              title: 'Konfirmasi Terkirim! 🚀',
-              description:
-                'Terima kasih atas dukungan Anda. Data donasi akan segera kami verifikasi.',
-              color: 'success',
-            });
+      mutateAsync(payload, {
+        onSuccess: () => {
+          onClose();
+          addToast({
+            title: 'Konfirmasi Terkirim! 🚀',
+            description:
+              'Terima kasih atas dukungan Anda. Data donasi akan segera kami verifikasi.',
+            color: 'success',
+          });
 
-            // Reset Form
-            setName('');
-            setAmount('');
-            setMessage('');
-            setFile(null);
-          }
-        }
-      )
+          // Reset Form
+          setName('');
+          setAmount('');
+          setMessage('');
+          setFile(null);
+          setLoading(false);
+        },
+      });
     } catch (error: any) {
       addToast({
-        title: error?.response?.data?.message || error?.message || "Internal server error",
-        color: 'danger'
-      })
-    } finally {
+        title:
+          error?.response?.data?.message ||
+          error?.message ||
+          'Internal server error',
+        color: 'danger',
+      });
       setLoading(false);
     }
   };
 
   return (
     <>
-      <SEO title="Dukung & Donasi" description="Mari ikut berkontribusi melalui donasi dan dukung berbagai kegiatan agar dapat terus berkembang dan memberikan manfaat yang lebih luas." />
+      <SEO
+        title="Dukung & Donasi"
+        description="Mari ikut berkontribusi melalui donasi dan dukung berbagai kegiatan agar dapat terus berkembang dan memberikan manfaat yang lebih luas."
+      />
       <div className="w-full bg-white text-slate-900 min-h-screen pt-28 pb-16 lg:pt-32 lg:pb-24">
         <div className="container mx-auto px-4 max-w-5xl">
           {/* ================= HEADER ================= */}
@@ -196,10 +200,17 @@ export default function DonationPage() {
                             </Skeleton>
                           </div>
                         </div>
-                      ) : FETCH_DATA_PAYMENT.filter(item => item.type === "QRIS").length > 0 ? (
+                      ) : FETCH_DATA_PAYMENT.filter(
+                          (item) => item.type === 'QRIS'
+                        ).length > 0 ? (
                         <div className="pt-4 space-y-3">
-                          {FETCH_DATA_PAYMENT.filter(item => item.type === "QRIS").map((acc, idx) => (
-                            <div key={acc.id ?? idx} className="flex flex-col items-center text-center bg-white p-6 rounded-2xl border border-slate-200/80">
+                          {FETCH_DATA_PAYMENT.filter(
+                            (item) => item.type === 'QRIS'
+                          ).map((acc, idx) => (
+                            <div
+                              key={acc.id ?? idx}
+                              className="flex flex-col items-center text-center bg-white p-6 rounded-2xl border border-slate-200/80"
+                            >
                               <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-sm mb-3">
                                 {acc.qrisImage ? (
                                   <img
@@ -207,13 +218,12 @@ export default function DonationPage() {
                                     alt="QRIS Donasi"
                                     className="w-48 h-48 object-contain"
                                   />
-                                  ) : (
-                                    <QrCode
-                                      size={32}
-                                      className="mx-auto mb-3 text-slate-300"
-                                    />
-                                  )
-                                }
+                                ) : (
+                                  <QrCode
+                                    size={32}
+                                    className="mx-auto mb-3 text-slate-300"
+                                  />
+                                )}
                               </div>
 
                               <span className="text-xs font-bold text-slate-900 mb-1">
@@ -239,7 +249,8 @@ export default function DonationPage() {
                             </p>
 
                             <p className="text-xs text-slate-400 mt-1">
-                              Metode pembayaran QRIS belum tersedia untuk campaign ini.
+                              Metode pembayaran QRIS belum tersedia untuk
+                              campaign ini.
                             </p>
                           </div>
                         </div>
@@ -283,9 +294,13 @@ export default function DonationPage() {
                             </div>
                           ))}
                         </div>
-                      ) : FETCH_DATA_PAYMENT.filter(item => item.type === "BANK_TRANSFER").length > 0 ? (
+                      ) : FETCH_DATA_PAYMENT.filter(
+                          (item) => item.type === 'BANK_TRANSFER'
+                        ).length > 0 ? (
                         <div className="pt-4 space-y-3">
-                          {FETCH_DATA_PAYMENT.filter(item => item.type === "BANK_TRANSFER").map((acc, idx) => (
+                          {FETCH_DATA_PAYMENT.filter(
+                            (item) => item.type === 'BANK_TRANSFER'
+                          ).map((acc, idx) => (
                             <div
                               key={acc.id ?? idx}
                               className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-between"
@@ -309,12 +324,18 @@ export default function DonationPage() {
                                 size="sm"
                                 variant="flat"
                                 onPress={() =>
-                                  handleCopy(acc.accountNumber || "", `acc-${idx}`)
+                                  handleCopy(
+                                    acc.accountNumber || '',
+                                    `acc-${idx}`
+                                  )
                                 }
                                 className="bg-slate-100 hover:bg-slate-200 text-slate-700"
                               >
                                 {copiedIndex === `acc-${idx}` ? (
-                                  <Check size={16} className="text-emerald-600" />
+                                  <Check
+                                    size={16}
+                                    className="text-emerald-600"
+                                  />
                                 ) : (
                                   <Copy size={16} />
                                 )}
@@ -335,7 +356,8 @@ export default function DonationPage() {
                             </p>
 
                             <p className="text-xs text-slate-400 mt-1">
-                              Belum ada rekening transfer yang tersedia untuk campaign ini.
+                              Belum ada rekening transfer yang tersedia untuk
+                              campaign ini.
                             </p>
                           </div>
                         </div>
@@ -393,7 +415,8 @@ export default function DonationPage() {
                     {/* Upload Bukti Pembayaran */}
                     <div className="space-y-1.5 -mt-4 mb-4">
                       <label className="text-xs font-semibold text-slate-700 block">
-                        Bukti Pembayaran <span className="text-rose-500">*</span>
+                        Bukti Pembayaran{' '}
+                        <span className="text-rose-500">*</span>
                       </label>
                       <div className="relative border-2 border-dashed border-slate-200 hover:border-blue-500 rounded-2xl p-4 transition-colors bg-slate-50/50 flex flex-col items-center justify-center text-center cursor-pointer">
                         <input
@@ -457,8 +480,8 @@ export default function DonationPage() {
 
             <ModalBody className="py-5 text-sm text-slate-600 space-y-3">
               <p className="text-xs text-slate-500">
-                Pastikan rincian data konfirmasi donasi Anda sudah sesuai sebelum
-                dikirimkan ke tim verifikasi.
+                Pastikan rincian data konfirmasi donasi Anda sudah sesuai
+                sebelum dikirimkan ke tim verifikasi.
               </p>
 
               <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">

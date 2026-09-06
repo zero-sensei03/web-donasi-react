@@ -1,9 +1,9 @@
 // src/store/site.ts
 
-import type { CampaignPublicRes } from "@/interfaces/campaign.interface";
-import type { SiteResponse } from "@/interfaces/site.interface";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import type { CampaignPublicRes } from '@/interfaces/campaign.interface';
+import type { SiteResponse } from '@/interfaces/site.interface';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 type SiteData = Record<string, string>;
 
@@ -27,7 +27,7 @@ export const useSiteStore = create<SiteState>()(
       setSiteData: (data) =>
         set({
           siteData: Object.fromEntries(
-            data.map((item) => [item.key.replace(".", "_"), item.value])
+            data.map((item) => [item.key.replace('.', '_'), item.value])
           ),
         }),
 
@@ -47,7 +47,7 @@ export const useSiteStore = create<SiteState>()(
         }),
     }),
     {
-      name: "web-donasi-site",
+      name: 'web-donasi-site',
 
       partialize: (state) => ({
         siteData: state.siteData,

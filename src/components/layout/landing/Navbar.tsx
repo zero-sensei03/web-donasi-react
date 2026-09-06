@@ -13,8 +13,9 @@ export const NavbarPublic = ({
   siteSetting: siteSettingProps;
 }) => {
   const campaign = useSiteStore((state) => state.campaignData);
-  const navMenu = campaign ? NavbarLandingMenu : ( NavbarLandingMenu.filter(item => item.key === "home") || [] )
-
+  const navMenu = campaign
+    ? NavbarLandingMenu
+    : NavbarLandingMenu.filter((item) => item.key === 'home') || [];
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

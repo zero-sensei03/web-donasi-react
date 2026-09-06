@@ -29,22 +29,30 @@ export default function GalleryPage() {
   ];
 
   const campaign = useSiteStore((state) => state.campaignData);
-  if(!campaign) {
-    return <InactiveCampaignPage />
+  if (!campaign) {
+    return <InactiveCampaignPage />;
   }
 
-  const { data: galleryData, isLoading: isLoadingGallery } = useGetGalleryPublic(campaign.id);
+  const { data: galleryData, isLoading: isLoadingGallery } =
+    useGetGalleryPublic(campaign.id);
   const [activeCategory, setActiveCategory] = useState('all');
-  const [selectedItem, setSelectedItem] = useState<
-    GalleryRes | null
-  >(null);
+  const [selectedItem, setSelectedItem] = useState<GalleryRes | null>(null);
   const FETCH_GALLERY = useMemo(() => {
-    return (galleryData?.data || []).filter(item => activeCategory === "image" ? item.galleryType === "IMAGE" : ( activeCategory === "video" ? item.galleryType === "VIDEO" : item ))
-  }, [galleryData, activeCategory])
+    return (galleryData?.data || []).filter((item) =>
+      activeCategory === 'image'
+        ? item.galleryType === 'IMAGE'
+        : activeCategory === 'video'
+          ? item.galleryType === 'VIDEO'
+          : item
+    );
+  }, [galleryData, activeCategory]);
 
   return (
     <>
-      <SEO title="Galeri" description="Lihat berbagai dokumentasi kegiatan dan momen yang terwujud melalui dukungan, kepedulian, dan kontribusi para donatur." />
+      <SEO
+        title="Galeri"
+        description="Lihat berbagai dokumentasi kegiatan dan momen yang terwujud melalui dukungan, kepedulian, dan kontribusi para donatur."
+      />
       <div className="w-full bg-white text-slate-900 min-h-screen pt-28 pb-16 lg:pt-32 lg:pb-24">
         <div className="container mx-auto px-4 max-w-6xl">
           {/* ================= HEADER ================= */}
@@ -133,7 +141,8 @@ export default function GalleryPage() {
                         </>
                       ) : (
                         <>
-                          <ImageIcon size={12} className="text-emerald-400" /> Foto
+                          <ImageIcon size={12} className="text-emerald-400" />{' '}
+                          Foto
                         </>
                       )}
                     </div>
@@ -169,7 +178,6 @@ export default function GalleryPage() {
           ) : (
             <ContentNotFound />
           )}
-
         </div>
 
         {/* ================= FULLSCREEN LIGHTBOX MODAL ================= */}
@@ -189,7 +197,8 @@ export default function GalleryPage() {
               <ModalBody className="p-4 sm:p-6 max-h-[72vh] overflow-y-auto scrollbar-hide">
                 {/* Media Container (Foto / Video) */}
                 <div className="w-full h-auto mb-4 relative">
-                  {selectedItem.galleryType === 'VIDEO' && selectedItem.videoUrl ? (
+                  {selectedItem.galleryType === 'VIDEO' &&
+                  selectedItem.videoUrl ? (
                     <video
                       controls
                       autoPlay

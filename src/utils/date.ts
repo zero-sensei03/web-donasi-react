@@ -9,7 +9,7 @@
  * Output follows the user's/browser local timezone.
  */
 export const formatDateTime = (
-  value: string | Date | null | undefined,
+  value: string | Date | null | undefined
 ): string => {
   if (!value) return '-';
 
@@ -37,7 +37,7 @@ export const formatDateTime = (
   return `${pad(date.getDate())} ${
     months[date.getMonth()]
   } ${date.getFullYear()}, ${pad(date.getHours())}:${pad(
-    date.getMinutes(),
+    date.getMinutes()
   )}:${pad(date.getSeconds())}`;
 };
 
@@ -50,7 +50,7 @@ export const formatDateTime = (
  * UTC         -> 2026-09-05 14:36:00
  */
 export const toUTCDateTime = (
-  value: Date | string | null | undefined,
+  value: Date | string | null | undefined
 ): string => {
   if (!value) return '';
 
@@ -58,11 +58,5 @@ export const toUTCDateTime = (
 
   if (Number.isNaN(date.getTime())) return '';
 
-  const pad = (number: number) => String(number).padStart(2, '0');
-
-  return `${date.getUTCFullYear()}-${pad(
-    date.getUTCMonth() + 1,
-  )}-${pad(date.getUTCDate())} ${pad(date.getUTCHours())}:${pad(
-    date.getUTCMinutes(),
-  )}:${pad(date.getUTCSeconds())}`;
+  return date.toISOString();
 };
