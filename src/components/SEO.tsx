@@ -9,7 +9,7 @@ interface SEOProps {
   noIndex?: boolean;
 }
 
-const SITE_URL = 'https://donasi.meifadev.my.id';
+const SITE_URL = 'https://dukungatac-krti2026.web.id';
 const SITE_NAME = 'Ayo Berdonasi';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.webp`;
 
