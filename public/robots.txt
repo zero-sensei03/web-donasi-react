@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://donasi.meifadev.my.id/sitemap.xml
+Sitemap: https://dukungatac-krti2026.web.id/sitemap.xml
