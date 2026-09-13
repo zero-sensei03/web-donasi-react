@@ -1,3 +1,4 @@
+import { useSiteStore } from '@/stores/data-site';
 import { Helmet } from 'react-helmet-async';
 
 interface SEOProps {
@@ -12,6 +13,7 @@ interface SEOProps {
 const SITE_URL = 'https://dukungatac-krti2026.web.id';
 const SITE_NAME = 'Ayo Berdonasi';
 const DEFAULT_IMAGE = `${SITE_URL}/og-image.webp`;
+const DEFAULT_LOGO = `${SITE_URL}/logo.webp`;
 
 export function SEO({
   title,
@@ -21,7 +23,11 @@ export function SEO({
   canonical,
   noIndex = false,
 }: SEOProps) {
-  const fullTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`;
+
+  const siteData = useSiteStore((state) => state.siteData);
+
+  const fullTitle = title === (siteData.app_name || SITE_NAME) ? title : `${title} | ${siteData.app_name || SITE_NAME}`;
+  const logo = siteData.app_logo || DEFAULT_LOGO;
 
   const metaImage = image || DEFAULT_IMAGE;
 
@@ -88,9 +94,9 @@ export function SEO({
       <meta name="twitter:image:alt" content={fullTitle} />
 
       {/* Favicon */}
-      <link rel="icon" href="/favicon.ico" />
+      <link rel="icon" href={logo} />
 
-      <link rel="apple-touch-icon" href="/favicon.ico" />
+      <link rel="apple-touch-icon" href={logo} />
     </Helmet>
   );
 }
